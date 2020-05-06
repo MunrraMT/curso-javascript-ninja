@@ -30,90 +30,97 @@
   adicionar as informações em tela.
   */
 
-  // SOLUÇÃO DA AULA 28
-  var $formCEP = new DOM( '[data-js="form-cep"]' );
-  var $inputCEP = new DOM( '[data-js="input-cep"]' );
-  var ajax = new XMLHttpRequest();
-  var $logradouro = new DOM( '[data-js="logradouro"]' );
-  var $bairro = new DOM( '[data-js="bairro"]' );
-  var $estado = new DOM( '[data-js="estado"]' );
-  var $cidade = new DOM( '[data-js="cidade"]' );
-  var $status = new DOM( '[data-js="status"]' );
-  $formCEP.on( 'submit', handleSubmitFormCEP );
+  function app() {
+    
+    // SOLUÇÃO DA AULA 28
+    var $formCEP = new DOM( '[data-js="form-cep"]' );
+    var $inputCEP = new DOM( '[data-js="input-cep"]' );
+    var ajax = new XMLHttpRequest();
+    var $logradouro = new DOM( '[data-js="logradouro"]' );
+    var $bairro = new DOM( '[data-js="bairro"]' );
+    var $estado = new DOM( '[data-js="estado"]' );
+    var $cidade = new DOM( '[data-js="cidade"]' );
+    var $status = new DOM( '[data-js="status"]' );
+    $formCEP.on( 'submit', handleSubmitFormCEP );
 
-  function handleSubmitFormCEP( event ) {
-    event.preventDefault();
-    var url = getUrl();
-    ajax.open( 'GET', url );
-    ajax.send();
-    getMessage( 'loading' );
-    ajax.addEventListener( 'readystatechange', handleReadyStateChange );
-  }
-
-  function getUrl() {
-    return replaceCEP( 'https://ws.apicep.com/cep/[CEP].json' );
-  }
-
-  function replaceCEP( message ) {
-    return message.replace( '[CEP]', clearCEP() );
-  }
-
-  function clearCEP() {
-    return $inputCEP.get()[0].value.replace( /\D/g, '' );
-  }
-
-  function handleReadyStateChange() {
-    if( isRequestOk() ) {
-      getMessage( 'ok' );
-      fillCEPFields();
+    function handleSubmitFormCEP( event ) {
+      event.preventDefault();
+      var url = getUrl();
+      ajax.open( 'GET', url );
+      ajax.send();
+      getMessage( 'loading' );
+      ajax.addEventListener( 'readystatechange', handleReadyStateChange );
     }
+
+    function getUrl() {
+      return replaceCEP( 'https://ws.apicep.com/cep/[CEP].json' );
+    }
+
+    function replaceCEP( message ) {
+      return message.replace( '[CEP]', clearCEP() );
+    }
+
+    function clearCEP() {
+      return $inputCEP.get()[0].value.replace( /\D/g, '' );
+    }
+
+    function handleReadyStateChange() {
+      if( isRequestOk() ) {
+        getMessage( 'ok' );
+        fillCEPFields();
+      }
+    }
+
+    function isRequestOk() {
+      return ajax.readyState === 4 && ajax.status === 200;
+    }
+
+    function fillCEPFields() {
+      var data = parseData();
+      if( data.status === 400 ) {
+        getMessage( 'error' );
+        data = clearData();
+      } else {
+        $logradouro.get()[0].textContent = data.address;
+        $bairro.get()[0].textContent = data.district;
+        $estado.get()[0].textContent = data.state;
+        $cidade.get()[0].textContent = data.city;
+      }
+    }
+
+    function clearData() {
+      return {
+        address: '-',
+        district: '-',
+        state: '-',
+        city: '-'
+      }
+    }
+
+    function parseData() {
+      var result;
+      try {
+        result = JSON.parse( ajax.responseText );
+      }
+      catch(e) {
+        result = null;
+      }
+      return result;
+    }
+
+    function getMessage( type ) {                 
+      var messages = {
+        loading: replaceCEP( 'Buscando informações para o CEP [CEP]...' ),
+        ok: replaceCEP( 'Endereço referente ao CEP [CEP]:' ),
+        error: replaceCEP( 'Não encontramos o endereço para o CEP [CEP].' )
+      }
+      $status.get()[0].textContent = messages[ type ];
+    }
+    // SOLUÇÃO DA AULA 28
+
   }
 
-  function isRequestOk() {
-    return ajax.readyState === 4 && ajax.status === 200;
-  }
-
-  function fillCEPFields() {
-    var data = parseData();
-    if( data.status === 400 ) {
-      getMessage( 'error' );
-      data = clearData();
-    } else {
-      $logradouro.get()[0].textContent = data.address;
-      $bairro.get()[0].textContent = data.district;
-      $estado.get()[0].textContent = data.state;
-      $cidade.get()[0].textContent = data.city;
-    }
-  }
-
-  function clearData() {
-    return {
-      address: '-',
-      district: '-',
-      state: '-',
-      city: '-'
-    }
-  }
-
-  function parseData() {
-    var result;
-    try {
-      result = JSON.parse( ajax.responseText );
-    }
-    catch(e) {
-      result = null;
-    }
-    return result;
-  }
-
-  function getMessage( type ) {                 
-    var messages = {
-      loading: replaceCEP( 'Buscando informações para o CEP [CEP]...' ),
-      ok: replaceCEP( 'Endereço referente ao CEP [CEP]:' ),
-      error: replaceCEP( 'Não encontramos o endereço para o CEP [CEP].' )
-    }
-    $status.get()[0].textContent = messages[ type ];
-  }
-  // SOLUÇÃO DA AULA 28
+  win.app = app();
+  app();
 
 } ) ( window, document, window.DOM );
