@@ -38,7 +38,7 @@
     // MENSAGEM DE ERRO DE CEP
     function mensagemErro() {
         limparFormularios();
-        // alert( 'CEP não encontrado' );
+        alert( 'CEP não encontrado' );
         console.log( 'CEP não encontrado' );
     }
     // MENSAGEM DE ERRO DE CEP
@@ -50,8 +50,10 @@
         event.preventDefault();
         var valor = $input.value;
         if( validarCEP( valor ) ) {
+            valor = validarCEP( valor );
             aguardandoPesquisaCEP();
-            conteudoCEP( valor );
+            conteudoCEP( +valor );
+            $input.value = +valor;
         } else {
             mensagemErro();
         }        
@@ -93,7 +95,7 @@
     
     // AUTO PREENCHIMENTO DE FORMULÁRIO COM BASE NO CEP VÁLIDO
     function autoPreenchumento() {
-        var conteudoParseado = JSON.parse( ajax.responseText );
+        var conteudoParseado = JSON.parse( ajax.responseText );        
         $logradouro.textContent = ( conteudoParseado.logradouro );
         $bairro.textContent = ( conteudoParseado.bairro );
         $estado.textContent = ( conteudoParseado.uf );

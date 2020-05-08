@@ -118,6 +118,11 @@
     }
     // SOLUÇÃO DA AULA 28
 
+    return {
+      getMessage: getMessage,
+      replaceCEP: replaceCEP
+    };
+
   }
 
   win.app = app();
