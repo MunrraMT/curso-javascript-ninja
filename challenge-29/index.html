@@ -4,14 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Challenge 29</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            box-sizing: border-box;
+        }
+        header {
+            text-align: center;
+        }
+        form, table {
+            float: left;
+            width: 50%;
+        }
+        ul {
+            list-style: none;
+        }
+        label {
+            display: block;
+        }
+        input {
+            padding: 5px;
+            width: 300px;
+        }
+        button {
+            background-color: green;
+            border-width: 0;
+            color: white;
+            width: 314px;
+            line-height: 30px;
+            margin-top: 20px;
+        }
+        button:hover, button:focus {
+            background-color: darkgreen;
+            cursor: pointer;
+        }
+        table {
+            border-collapse: collapse;
+        }
+        td, th {
+            padding: 5px 15px;
+            border: solid 1px #ccc;
+        }
+    </style>
 </head>
 <body>
     
     <header>
         <h1>
-            <span>Challenge 29</span>
+            <span data-js="company-name"></span>
              - 
-            <span>(11) 9 5544-4455</span>
+            <span data-js="company-phone"></span>
         </h1>
     </header>
 
@@ -67,6 +109,9 @@
         </thead>
         <tbody></tbody>
     </table>
+
+    <script src="challenge-29.js"></script>
+    <script src="company.json"></script>
 
 </body>
 </html>
