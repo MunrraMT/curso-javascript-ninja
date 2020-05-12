@@ -1,4 +1,4 @@
-(function() {
+(function( win, doc, $ ) {
   'use strict';
 
   /*
@@ -36,6 +36,79 @@
   que será nomeado de "app".
   */
 
-  
+  function app() {
+    return {
+      init: function() {
+        console.log('app init');
+        this.companyInfo();
+        this.initEvents();
+      },
 
-})();
+      initEvents: function initEvents() {
+        var $formRegister = $( '[data-js="form-register"]' );
+        $formRegister.addEventListener( 'submit', this.handleSubmit, false );
+      },
+
+      handleSubmit: function handleSubmit( event ) {
+        event.preventDefault();
+        console.log( 'submit' );
+        var $tableCar = $( '[data-js="table-car"]' );
+        $tableCar.appendChild( app().createNewCar() );
+      },
+
+      createNewCar: function createNewCar() {
+        var $fragment = doc.createDocumentFragment();
+        var $tr = doc.createElement( 'tr' );
+        var $tdImage = doc.createElement( 'td' );
+        var $image = doc.createElement( 'img' );
+        var $tdBrand = doc.createElement( 'td' );
+        var $tdyear = doc.createElement( 'td' );
+        var $tdPlate = doc.createElement( 'td' );
+        var $tdColor = doc.createElement( 'td' );
+
+        $image.setAttribute( 'src', $( '[data-js="image"]' ).value );
+        $image.setAttribute( 'width', '100px' );
+        $tdImage.appendChild( $image );
+
+        $tdBrand.textContent = $( '[data-js="brand-model"]' ).value;
+        $tdyear.textContent = $( '[data-js="year"]' ).value;
+        $tdPlate.textContent = $( '[data-js="plate"]' ).value;
+        $tdColor.textContent = $( '[data-js="color"]' ).value;
+
+        $tr.appendChild( $tdImage );
+        $tr.appendChild( $tdBrand );
+        $tr.appendChild( $tdyear );
+        $tr.appendChild( $tdPlate );
+        $tr.appendChild( $tdColor );
+
+        return $fragment.appendChild( $tr );
+      },
+
+      companyInfo: function companyInfo() {
+        var ajax = new XMLHttpRequest();
+        ajax.open( 'GET', './company.json', true );
+        ajax.send();
+        ajax.addEventListener( 'readystatechange', this.getCompanyInfo, false );
+      },
+
+      getCompanyInfo: function getCompanyInfo() {
+        if( !app().isReady.call( this ) ) {
+          return;
+        }
+
+        var data = JSON.parse(this.responseText);
+        var $companyName = $( '[data-js="company-name"]' );
+        var $companyPhone = $( '[data-js="company-phone"]' );
+        $companyName.textContent = data.name;
+        $companyPhone.textContent = data.phone;
+      },
+
+      isReady: function isReady() {
+        return this.readyState === 4 && this.status === 200
+      }
+    };
+  }
+
+  app().init();
+  
+})( window, document, window.DOM );
